@@ -85,7 +85,7 @@ const puppeteer = require('puppeteer');
     }
   });
 
-  await page.goto(targetURL);
+  await page.goto(targetURL, {'timeout': timeout});
 
   await page.evaluate(() => {
     QUnit.config.testTimeout = 10000;
