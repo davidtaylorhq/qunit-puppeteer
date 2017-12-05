@@ -11,9 +11,14 @@ const targetURL = args[0];
 const timeout = parseInt(args[1] || 300000, 10);
 
 const puppeteer = require('puppeteer');
+const os = require('os');
 
 (async () => {
-  const browser = await puppeteer.launch();
+  var puppeteer_options = {};
+  if (os.platform() === 'linux') {
+    puppeteer_options = {args: ['--no-sandbox --disable-setuid-sandbox']}
+  }
+  const browser = await puppeteer.launch(puppeteer_options);
   const page = await browser.newPage();
 
   // Attach to browser console log events, and log to node console
