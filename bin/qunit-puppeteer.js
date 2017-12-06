@@ -16,7 +16,7 @@ const os = require('os');
 (async () => {
   var puppeteer_options = {};
   if (os.platform() === 'linux') {
-    puppeteer_options = {args: ['--no-sandbox --disable-setuid-sandbox']}
+    puppeteer_options = {args: ['--no-sandbox', '--disable-setuid-sandbox']}
   }
   const browser = await puppeteer.launch(puppeteer_options);
   const page = await browser.newPage();
