@@ -99,6 +99,10 @@ const puppeteer = require('puppeteer');
       QUnit.done((context) => { window.harness_done(context); });
 
       console.log("\nRunning: " + JSON.stringify(QUnit.urlParams) + "\n");
+
+      if (!QUnit.config.autostart) {
+        QUnit.start();
+      }
     });
 
     function wait(ms) {
