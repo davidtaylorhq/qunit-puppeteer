@@ -19,7 +19,7 @@ const puppeteer = require('puppeteer');
   // Attach to browser console log events, and log to node console
   await page.on('console', (...params) => {
     for (let i = 0; i < params.length; ++i)
-      console.log(`${params[i]}`);
+      console.log(`${(typeof(params[i]) === 'object') ? params[i]._text : params[i]}`);
   });
 
   var moduleErrors = [];
