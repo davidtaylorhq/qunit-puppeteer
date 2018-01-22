@@ -19,12 +19,21 @@ const puppeteer = require('puppeteer');
   // Attach to browser console log events, and log to node console
   await page.on('console', (...params) => {
     for (let i = 0; i < params.length; ++i)
-      console.log(`${params[i]}`);
+      console.log(`${(typeof(params[i]) === 'object') ? params[i]._text : params[i]}`);
   });
 
   var moduleErrors = [];
   var testErrors = [];
   var assertionErrors = [];
+
+  await page.exposeFunction('harness_moduleStart', context => {
+    var skippedTests = context.tests.filter(t => t.skip).length;
+    if (skippedTests === context.tests.length) {
+      console.log(`\x1b[4m\x1b[36mSkipping Module: ${context.name}\x1b[0m`);
+    } else {
+      console.log(`\x1b[4mRunning Module: ${context.name}\x1b[0m`);
+    }
+  });
 
   await page.exposeFunction('harness_moduleDone', context => {
     if (context.failed) {
@@ -39,9 +48,11 @@ const puppeteer = require('puppeteer');
       var msg = "  Test Failed: " + context.name + assertionErrors.join("    ");
       testErrors.push(msg);
       assertionErrors = [];
-      process.stdout.write("F");
+      process.stdout.write("\x1b[31mF\x1b[0m");
+    } else if (context.skipped) {
+      process.stdout.write("\x1b[36m.\x1b[0m");
     } else {
-      process.stdout.write(".");
+      process.stdout.write("\x1b[37m.\x1b[0m");
     }
   });
 
@@ -92,12 +103,15 @@ const puppeteer = require('puppeteer');
 
     // Cannot pass the window.harness_blah methods directly, because they are
     // automatically defined as async methods, which QUnit does not support
+    QUnit.moduleStart((context) => { window.harness_moduleStart(context); });
     QUnit.moduleDone((context) => { window.harness_moduleDone(context); });
     QUnit.testDone((context) => { window.harness_testDone(context); });
     QUnit.log((context) => { window.harness_log(context); });
     QUnit.done((context) => { window.harness_done(context); });
 
-    console.log("\nRunning: " + JSON.stringify(QUnit.urlParams) + "\n");
+    if (Object.keys(QUnit.urlParams).length) {
+      console.log("\nRunning with params: " + JSON.stringify(QUnit.urlParams) + "\n");
+    }
   });
 
   function wait(ms) {
@@ -105,7 +119,7 @@ const puppeteer = require('puppeteer');
   }
   await wait(timeout);
 
-  console.error("Tests timed out");
+  console.error(`\x1b[33mTests timed out after ${timeout}ms\x1b[0m`);
   browser.close();
   process.exit(124);
 })().catch((error) => {
