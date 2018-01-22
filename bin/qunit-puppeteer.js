@@ -40,6 +40,8 @@ const puppeteer = require('puppeteer');
       testErrors.push(msg);
       assertionErrors = [];
       process.stdout.write("F");
+    } else if (context.skipped) {
+      process.stdout.write("s");
     } else {
       process.stdout.write(".");
     }
