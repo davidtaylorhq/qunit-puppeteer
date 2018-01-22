@@ -26,6 +26,15 @@ const puppeteer = require('puppeteer');
   var testErrors = [];
   var assertionErrors = [];
 
+  await page.exposeFunction('harness_moduleStart', context => {
+    var skippedTests = context.tests.filter(t => t.skip).length;
+    if (skippedTests === context.tests.length) {
+      console.log(`Skipping Module: ${context.name}`);
+    } else {
+      console.log(`Running Module: ${context.name}`);
+    }
+  });
+
   await page.exposeFunction('harness_moduleDone', context => {
     if (context.failed) {
       var msg = "Module Failed: " + context.name + "\n" + testErrors.join("\n");
@@ -94,6 +103,7 @@ const puppeteer = require('puppeteer');
 
     // Cannot pass the window.harness_blah methods directly, because they are
     // automatically defined as async methods, which QUnit does not support
+    QUnit.moduleStart((context) => { window.harness_moduleStart(context); });
     QUnit.moduleDone((context) => { window.harness_moduleDone(context); });
     QUnit.testDone((context) => { window.harness_testDone(context); });
     QUnit.log((context) => { window.harness_log(context); });
