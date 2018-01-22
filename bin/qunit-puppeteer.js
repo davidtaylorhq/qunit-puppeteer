@@ -109,7 +109,9 @@ const puppeteer = require('puppeteer');
     QUnit.log((context) => { window.harness_log(context); });
     QUnit.done((context) => { window.harness_done(context); });
 
-    console.log("\nRunning: " + JSON.stringify(QUnit.urlParams) + "\n");
+    if (Object.keys(QUnit.urlParams).length) {
+      console.log("\nRunning with params: " + JSON.stringify(QUnit.urlParams) + "\n");
+    }
   });
 
   function wait(ms) {
