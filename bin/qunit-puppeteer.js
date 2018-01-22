@@ -29,9 +29,9 @@ const puppeteer = require('puppeteer');
   await page.exposeFunction('harness_moduleStart', context => {
     var skippedTests = context.tests.filter(t => t.skip).length;
     if (skippedTests === context.tests.length) {
-      console.log(`Skipping Module: ${context.name}`);
+      console.log(`\x1b[4m\x1b[36mSkipping Module: ${context.name}\x1b[0m`);
     } else {
-      console.log(`Running Module: ${context.name}`);
+      console.log(`\x1b[4mRunning Module: ${context.name}\x1b[0m`);
     }
   });
 
@@ -48,11 +48,11 @@ const puppeteer = require('puppeteer');
       var msg = "  Test Failed: " + context.name + assertionErrors.join("    ");
       testErrors.push(msg);
       assertionErrors = [];
-      process.stdout.write("F");
+      process.stdout.write("\x1b[31mF\x1b[0m");
     } else if (context.skipped) {
-      process.stdout.write("s");
+      process.stdout.write("\x1b[36m.\x1b[0m");
     } else {
-      process.stdout.write(".");
+      process.stdout.write("\x1b[37m.\x1b[0m");
     }
   });
 
@@ -119,7 +119,7 @@ const puppeteer = require('puppeteer');
   }
   await wait(timeout);
 
-  console.error("Tests timed out");
+  console.error(`\x1b[33mTests timed out after ${timeout}ms\x1b[0m`);
   browser.close();
   process.exit(124);
 })().catch((error) => {
