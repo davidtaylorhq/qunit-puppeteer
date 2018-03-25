@@ -1,6 +1,6 @@
 {
   "name": "qunit-puppeteer",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "description": "A test harness for running QUnit tests in headless Chromium",
   "bin": {
     "qunit-puppeteer": "bin/qunit-puppeteer.js"
@@ -19,7 +19,7 @@
     "headless",
     "testing"
   ],
-  "author": "David Taylor",
+  "author": "David Taylor, Sebastian Piskorski (sebastian.piskorski@gmail.com)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/davidtaylorhq/qunit-puppeteer/issues"
